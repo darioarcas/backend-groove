@@ -10,6 +10,10 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
 } else {
   // En desarrollo, cargar localmente el archivo
   // serviceAccount = require('./serviceAccountKey.json');
+
+  // En produccion, para que no de error
+  throw new Error('FIREBASE_SERVICE_ACCOUNT no está definido en las variables de entorno');
+  
 }
 
 admin.initializeApp({
