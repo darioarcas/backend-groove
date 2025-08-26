@@ -37,7 +37,8 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid }) => {
     });
     const data = await response.json();
     console.log("✅ Preferencia creada:", data);
-    return { init_point: data.init_point };
+    return data.init_point;
+    // return { init_point: data.init_point };
     // return data.init_point;
   } catch (error) {
     console.error('❌ Error creando preferencia vía REST:', error);
