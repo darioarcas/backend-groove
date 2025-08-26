@@ -9,7 +9,7 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 } else {
   // En desarrollo, cargar localmente el archivo
-  serviceAccount = require('./serviceAccountKey.json');
+  // serviceAccount = require('./serviceAccountKey.json');
 }
 
 admin.initializeApp({
