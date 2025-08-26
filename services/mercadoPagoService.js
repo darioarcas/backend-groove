@@ -12,11 +12,8 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid }) => {
       },
     ],
     back_urls: {
-      // success: `http://localhost:3000/pago-exitoso`, // ajustá según frontend real
-      success: `https://www.google.com`, // solo para pruebas
-
-      // failure: `http://localhost:3000/pago-fallido`,
-      failure: `https://www.google.com`,
+      success: `https://academiagroove.com/perfil`,
+      failure: `https://academiagroove.com/error-pago`, // o lo que prefieras
     },
     notification_url: `https://backend-groove-pi69.onrender.com/api/webhook/mercadopago`,
 
