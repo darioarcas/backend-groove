@@ -11,7 +11,7 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   // En desarrollo, cargar localmente el archivo
   // serviceAccount = require('./serviceAccountKey.json');
 
-  // En produccion, para que no de error
+  // En produccion, para que no de error, luego comentamos para hacer pruebas
   throw new Error('FIREBASE_SERVICE_ACCOUNT no está definido en las variables de entorno');
   
 }
