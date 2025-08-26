@@ -18,10 +18,10 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid }) => {
       // failure: `http://localhost:3000/pago-fallido`,
       failure: `https://www.google.com`,
     },
-    // notification_url: `http://localhost:5000/api/webhook/mercadopago`,
+    notification_url: `https://backend-groove-pi69.onrender.com/api/webhook/mercadopago`,
 
     // URL de Ngrok
-    notification_url: `https://fb5dd66e04b4.ngrok-free.app`,
+    // notification_url: `https://fb5dd66e04b4.ngrok-free.app`,
     external_reference: `${cursoId}_${uid}`,
     auto_return: 'approved',
   };
@@ -37,7 +37,8 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid }) => {
     });
     const data = await response.json();
     console.log("✅ Preferencia creada:", data);
-    return data.init_point;
+    return { init_point: data.init_point };
+    // return data.init_point;
   } catch (error) {
     console.error('❌ Error creando preferencia vía REST:', error);
     throw error;
