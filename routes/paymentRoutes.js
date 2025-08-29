@@ -7,8 +7,8 @@ const { crearPreferenciaPago } = require('../services/mercadoPagoService');
 router.post('/create_preference', async (req, res) => {
   console.log("📥 Llamada recibida en /create_preference"); // 👈
   try {
-    const { cursoNombre, cursoId, uid } = req.body;
-    const init_point = await crearPreferenciaPago({ cursoNombre, cursoId, uid });
+    const { cursoNombre, cursoId, uid, base_url } = req.body;
+    const init_point = await crearPreferenciaPago({ cursoNombre, cursoId, uid, base_url });
     console.log("🔁 init_point generado:", init_point); // 👈
     res.json({ init_point });
   } catch (error) {

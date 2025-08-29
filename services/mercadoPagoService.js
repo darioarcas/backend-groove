@@ -1,7 +1,17 @@
 // backend/services/mercadoPagoService.js
 const fetch = require('node-fetch');
 
-const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid }) => {
+const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => {
+  const successUrl = `${base_url}/perfil`;
+  const failureUrl = `${base_url}/error-pago`;
+
+
+  // Validar que base_url sea una URL permitida
+  const allowedOrigins = ['https://academiagroove.com', 'https://misitio.github.io'];
+  if (!allowedOrigins.includes(base_url)) {
+    throw new Error('Origen no permitido');
+  }
+
   const preference = {
     items: [
       {
@@ -12,8 +22,8 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid }) => {
       },
     ],
     back_urls: {
-      success: `https://academiagroove.com/perfil`,
-      failure: `https://academiagroove.com/error-pago`, // o lo que prefieras
+      success: successUrl,
+      failure: failureUrl,
     },
     notification_url: `https://backend-groove-pi69.onrender.com/api/webhook/mercadopago`,
 
@@ -35,8 +45,6 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid }) => {
     const data = await response.json();
     console.log("✅ Preferencia creada:", data);
     return data.init_point;
-    // return { init_point: data.init_point };
-    // return data.init_point;
   } catch (error) {
     console.error('❌ Error creando preferencia vía REST:', error);
     throw error;
