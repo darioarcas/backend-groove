@@ -7,7 +7,7 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => 
 
 
   // Validar que base_url sea una URL permitida
-  const allowedOrigins = ['https://academiagroove.com', 'https://misitio.github.io'];
+  const allowedOrigins = ['https://academiagroove.com', 'https://darioarcas.github.io/'];
   if (!allowedOrigins.includes(base_url)) {
     throw new Error('Origen no permitido');
   }
