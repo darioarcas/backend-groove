@@ -3,11 +3,11 @@ const fetch = require('node-fetch');
 
 const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => {
   // Validar que base_url sea una URL permitida
-  const allowedOrigins = ['https://academiagroove.com', 'https://darioarcas.github.io'];
+  const allowedOrigins = ['https://academiagroove.com', 'https://darioarcas.github.io', 'http://localhost:3000'];
   if (!allowedOrigins.includes(base_url)) {
     throw new Error('Origen no permitido');
   }
-  if (base_url === 'https://darioarcas.github.io') {
+  if (base_url === 'https://darioarcas.github.io' || base_url === 'http://localhost:3000') {
     base_url += '/pagina-groove-inicio-de-sesion';
   }
 
