@@ -8,7 +8,7 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => 
     throw new Error('Origen no permitido');
   }
   if (base_url === 'https://darioarcas.github.io' || base_url === 'http://localhost:3000') {
-    base_url += '/pagina-groove-inicio-de-sesion';
+    base_url += '/pagina-groove-inicio-de-sesion/#';
   }
 
 
