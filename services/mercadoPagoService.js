@@ -22,7 +22,7 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => 
       {
         title: cursoNombre || 'Curso',
         quantity: 1,
-        unit_price: 10,
+        unit_price: 1,
         currency_id: 'ARS',
       },
     ],
