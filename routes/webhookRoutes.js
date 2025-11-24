@@ -1,4 +1,4 @@
-//routes/webhookRoutes.js
+// routes/webhookRoutes.js
 
 const express = require("express");
 const router = express.Router();
@@ -26,6 +26,24 @@ router.post("/mercadopago", async (req, res) => {
       if (payment.status === "approved") {
         const [cursoId, uid] = payment.external_reference.split("_");
 
+        // Obtener el precio del curso desde Firestore
+        const cursoRef = db.collection("cursos_privados").doc(cursoId);
+        const cursoSnap = await cursoRef.get();
+
+        if (!cursoSnap.exists) {
+          console.warn("⚠️ Curso no encontrado:", cursoId);
+          return res.sendStatus(404);
+        }
+
+        const cursoData = cursoSnap.data();
+        const cursoPrecio = cursoData.precio; // Asegúrate de que el precio esté en el documento
+
+        // Verificar que el monto del pago coincida con el precio del curso
+        if (payment.transaction_amount !== cursoPrecio) {
+          console.warn("⚠️ Monto del pago no coincide con el precio del curso");
+          return res.sendStatus(400); // El monto no coincide
+        }
+
         // 🔓 Actualizar usuario en Firestore
         const userRef = db.collection("users").doc(uid);
         const userSnap = await userRef.get();
@@ -44,7 +62,6 @@ router.post("/mercadopago", async (req, res) => {
         });
 
         // Agregar UID como comprador del curso
-        const cursoRef = db.collection("cursos_privados").doc(cursoId);
         await cursoRef.update({
           compradores: admin.firestore.FieldValue.arrayUnion(uid),
         });

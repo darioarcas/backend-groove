@@ -1,5 +1,6 @@
-// backend/services/mercadoPagoService.js
 const fetch = require('node-fetch');
+const admin = require('firebase-admin'); // Usamos Firebase Admin para acceder a Firestore
+const db = admin.firestore();  // Acceso a Firestore
 
 const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => {
   // Validar que base_url sea una URL permitida
@@ -11,52 +12,57 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => 
     base_url += '/pagina-groove-inicio-de-sesion/#';
   }
 
-
-  const successUrl = `${base_url}/perfil`;
-  const failureUrl = `${base_url}/error-pago`;
-
-
-
-  const preference = {
-    items: [
-      {
-        title: cursoNombre || 'Curso',
-        quantity: 1,
-        unit_price: 1,
-        currency_id: 'ARS',
-      },
-    ],
-    back_urls: {
-      success: successUrl,
-      failure: failureUrl,
-    },
-    notification_url: `https://backend-groove-pi69.onrender.com/api/webhook/mercadopago`,
-
-    // URL de Ngrok
-    // notification_url: `https://fb5dd66e04b4.ngrok-free.app`,
-    external_reference: `${cursoId}_${uid}`,
-    auto_return: 'approved',
-  };
-
+  // Obtener el precio del curso desde Firestore
   try {
+    const cursoRef = db.collection('cursos_privados').doc(cursoId);  // Suponiendo que los cursos privados están en esta colección
+    const cursoDoc = await cursoRef.get();
+
+    if (!cursoDoc.exists) {
+      throw new Error('Curso no encontrado');
+    }
+
+    const cursoData = cursoDoc.data();
+    const precio = cursoData.precio;  // Suponiendo que el campo "precio" está en el curso
+
+    const successUrl = `${base_url}/perfil`;
+    const failureUrl = `${base_url}/error-pago`;
+
+    // Creamos la preferencia de pago
+    const preference = {
+      items: [
+        {
+          title: cursoNombre || 'Curso',  // Título del curso, o 'Curso' por defecto
+          quantity: 1,
+          unit_price: precio,  // Usamos el precio del curso obtenido desde Firestore
+          currency_id: 'ARS',
+        },
+      ],
+      back_urls: {
+        success: successUrl,
+        failure: failureUrl,
+      },
+      notification_url: `https://backend-groove-pi69.onrender.com/api/webhook/mercadopago`,  // URL del webhook para notificaciones
+      external_reference: `${cursoId}_${uid}`,  // Identificador único para la transacción
+      auto_return: 'approved',
+    };
+
+    // Realizamos la petición POST a MercadoPago para crear la preferencia
     const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`
+        Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,  // Token de MercadoPago
       },
       body: JSON.stringify(preference),
     });
+
     const data = await response.json();
     console.log("✅ Preferencia creada:", data);
-    return data.init_point;
+    return data.init_point;  // Retornamos el punto de inicio para redirigir al usuario
   } catch (error) {
     console.error('❌ Error creando preferencia vía REST:', error);
-    throw error;
+    throw error;  // Lanza el error para que el controlador lo maneje
   }
 };
 
 module.exports = { crearPreferenciaPago };
-
-
-
