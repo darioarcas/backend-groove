@@ -8,12 +8,8 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   // Parsear el JSON guardado como variable de entorno
   serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 } else {
-  // En desarrollo, cargar localmente el archivo
-  // serviceAccount = require('./serviceAccountKey.json');
-
-  // En produccion, para que no de error, luego comentamos para hacer pruebas
+  // En producción, debería estar configurada en las variables de entorno
   throw new Error('FIREBASE_SERVICE_ACCOUNT no está definido en las variables de entorno');
-  
 }
 
 admin.initializeApp({
@@ -22,5 +18,8 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
+console.log('Firebase Admin inicializado correctamente.'); // <-- Añade este log
+
 module.exports = { admin, db };
+
 
