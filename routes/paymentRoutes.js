@@ -31,7 +31,7 @@ router.post('/create_preference', async (req, res) => {
       cursoNombre, 
       cursoId, 
       uid, 
-      precio,  // Le pasamos el precio obtenido de Firestore
+      precio: parseInt(precio),  // Le pasamos el precio obtenido de Firestore
       base_url 
     });
 
