@@ -1,8 +1,8 @@
 // backend/routes/paymentRoutes.js
 
+const admin = require('firebase-admin');  // Agregamos Firebase Admin
 const express = require('express');
 const router = express.Router();
-const admin = require('firebase-admin');  // Agregamos Firebase Admin
 const { crearPreferenciaPago } = require('../services/mercadoPagoService');  // Mantén tu lógica de MercadoPago
 const db = admin.firestore();  // Accedemos a Firestore
 
