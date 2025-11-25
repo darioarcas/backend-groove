@@ -3,7 +3,7 @@
 const admin = require('firebase-admin');  // Agregamos Firebase Admin
 const express = require('express');
 const router = express.Router();
-const { crearPreferenciaPago } = require('../services/mercadoPagoService');  // Mantén tu lógica de MercadoPago
+const { crearPreferenciaPago } = require('../services/mercadoPagoService.js');  // Mantén tu lógica de MercadoPago
 const db = admin.firestore();  // Accedemos a Firestore
 
 // Ruta para crear la preferencia de pago

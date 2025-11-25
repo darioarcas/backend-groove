@@ -1,6 +1,6 @@
 // routes/webhookRoutes.js
 
-const { admin, db } = require("../firebaseAdmin");
+const { admin, db } = require("../firebaseAdmin.js");
 const express = require("express");
 const router = express.Router();
 const fetch = require("node-fetch");
@@ -17,7 +17,7 @@ router.post("/mercadopago", async (req, res) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKENs}`,
         },
       });
 

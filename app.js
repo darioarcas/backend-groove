@@ -2,8 +2,8 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const paymentRoutes = require('./routes/paymentRoutes');
-const webhookRoutes = require('./routes/webhookRoutes');
+const paymentRoutes = require('./routes/paymentRoutes.js');
+const webhookRoutes = require('./routes/webhookRoutes.js');
 
 
 
