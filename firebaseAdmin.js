@@ -1,36 +1,30 @@
 // backend/firebaseAdmin.js
-
-console.log('FIREBASE_SERVICE_ACCOUNT:', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 const admin = require('firebase-admin');
+
 let serviceAccount;
 
+// Verificamos si ya está inicializado
+if (admin.apps.length === 0) {  // Si no existe ninguna app de Firebase
+  console.log("🔥 Inicializando Firebase...");
 
-if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);s
-  try {
-    // Parsear el JSON guardado como variable de entorno
-  } catch (error) {
-    console.error("❌ Error al parsear FIREBASE_SERVICE_ACCOUNT:", error);
-    throw new Error('Error al parsear FIREBASE_SERVICE_ACCOUNT');
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    console.log("🔥 Firebase Service Account cargado");
+  } else {
+    console.log("❌ No se encuentra la variable de entorno FIREBASE_SERVICE_ACCOUNT");
+    throw new Error('FIREBASE_SERVICE_ACCOUNT no está definido en las variables de entorno');
   }
-} else {
-  // En producción, debería estar configurada en las variables de entorno
-  throw new Error('FIREBASE_SERVICE_ACCOUNT no está definido en las variables de entorno');
-}
 
-try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
-  console.log('Firebase Admin inicializado correctamente.'); // Confirmamos que se inicializa
-} catch (error) {
-  console.error("❌ Error al inicializar Firebase Admin:", error);  // Si hay un error, lo reportamos
-  throw error;  // Lanzamos el error si la inicialización falla
+} else {
+  console.log('🔥 Firebase ya estaba inicializado');
 }
 
-const db = admin.firestore();
-
+const db = admin.firestore();  // Esto ahora debería estar inicializado correctamente
 module.exports = { admin, db };
+
 
 
 
