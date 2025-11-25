@@ -1,7 +1,16 @@
 // backend/services/mercadoPagoService.js
+console.log('FIREBASE_SERVICE_ACCOUNT antes de "firebase-admin":', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
+
 const admin = require('firebase-admin'); // Usamos Firebase Admin para acceder a Firestore
+console.log('FIREBASE_SERVICE_ACCOUNT antes de "node-fetch":', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
+
 const fetch = require('node-fetch');
+console.log('FIREBASE_SERVICE_ACCOUNT antes de "admin.firestore()":', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
+
 const db = admin.firestore();  // Acceso a Firestore
+
+
+console.log('FIREBASE_SERVICE_ACCOUNT antes de "crearPreferenciaPago":', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 
 const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => {
   // Validar que base_url sea una URL permitida
