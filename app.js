@@ -8,7 +8,7 @@ const webhookRoutes = require('./routes/webhookRoutes.js');
 
 
 
-require('dotenv').config();
+//require('dotenv').config(); // Solo en local, no en produccion
 
 app.use(cors());
 app.use(express.json());
