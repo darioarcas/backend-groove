@@ -13,8 +13,6 @@ if (admin.apps.length === 0) {
 const db = admin.firestore();  // Acceso a Firestore (<-------------ACA FALLA)
 
 
-console.log('FIREBASE_SERVICE_ACCOUNT antes de "crearPreferenciaPago":', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
-
 const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => {
   // Validar que base_url sea una URL permitida
   const allowedOrigins = ['https://academiagroove.com', 'https://darioarcas.github.io', 'http://localhost:3000'];

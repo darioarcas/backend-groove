@@ -1,6 +1,5 @@
 // backend/firebaseAdmin.js
 
-console.log('FIREBASE_SERVICE_ACCOUNT (firebaseAdmin):', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 const admin = require('firebase-admin');
 let serviceAccount;
 
