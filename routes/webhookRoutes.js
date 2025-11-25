@@ -17,7 +17,7 @@ router.post("/mercadopago", async (req, res) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKENs}`,
+          Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
         },
       });
 
