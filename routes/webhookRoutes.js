@@ -1,8 +1,8 @@
 // routes/webhookRoutes.js
 
+const { admin, db } = require("../firebaseAdmin");
 const express = require("express");
 const router = express.Router();
-const { admin, db } = require("../firebaseAdmin");
 const fetch = require("node-fetch");
 
 router.post("/mercadopago", async (req, res) => {
