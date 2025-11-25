@@ -2,8 +2,8 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-console.log('FIREBASE_SERVICE_ACCOUNT:', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 const paymentRoutes = require('./routes/paymentRoutes.js');
+console.log('FIREBASE_SERVICE_ACCOUNT:', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 const webhookRoutes = require('./routes/webhookRoutes.js');
 
 
