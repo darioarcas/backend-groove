@@ -16,5 +16,9 @@
     "express": "^5.1.0",
     "firebase-admin": "^13.4.0",
     "mercadopago": "^1.5.17"
-  }
+  },
+  "engines": {
+  "node": "20.15.0"
+}
+
 }
