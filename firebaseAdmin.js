@@ -1,14 +1,14 @@
 // backend/firebaseAdmin.js
 
-console.log('FIREBASE_SERVICE_ACCOUNT:', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
+console.log('FIREBASE_SERVICE_ACCOUNT (firebaseAdmin):', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 const admin = require('firebase-admin');
 let serviceAccount;
 
 
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);s
   try {
     // Parsear el JSON guardado como variable de entorno
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   } catch (error) {
     console.error("❌ Error al parsear FIREBASE_SERVICE_ACCOUNT:", error);
     throw new Error('Error al parsear FIREBASE_SERVICE_ACCOUNT');
