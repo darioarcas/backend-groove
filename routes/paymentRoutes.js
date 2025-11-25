@@ -17,7 +17,7 @@ router.post('/create_preference', async (req, res) => {
     // 1. Obtener el precio del curso desde Firestore
     const cursoRef = db.collection('cursos_privados').doc(cursoId);  // Suponiendo que los cursos privados están en esta colección
     const cursoDoc = await cursoRef.get();
-    console.log("🔍 Curso obtenido de Firestore:", cursoDoc.exists); // 👈
+    console.log("🔍 Curso obtenido de Firestore:", cursoDoc); // 👈
 
     if (!cursoDoc.exists) {
       return res.status(404).json({ error: 'Curso no encontrado' });
