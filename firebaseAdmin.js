@@ -3,7 +3,7 @@
 const admin = require('firebase-admin');
 
 let serviceAccount;
-
+console.log('FIREBASE_SERVICE_ACCOUNT:', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   // Parsear el JSON guardado como variable de entorno
   serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
