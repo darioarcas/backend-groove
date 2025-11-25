@@ -7,7 +7,7 @@ const webhookRoutes = require('./routes/webhookRoutes.js');
 
 
 
-
+console.log('FIREBASE_SERVICE_ACCOUNT:', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 //require('dotenv').config(); // Solo en local, no en produccion
 
 app.use(cors());
