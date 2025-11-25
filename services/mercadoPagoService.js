@@ -1,5 +1,6 @@
-const fetch = require('node-fetch');
+// backend/services/mercadoPagoService.js
 const admin = require('firebase-admin'); // Usamos Firebase Admin para acceder a Firestore
+const fetch = require('node-fetch');
 const db = admin.firestore();  // Acceso a Firestore
 
 const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => {
@@ -14,7 +15,7 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => 
 
   // Obtener el precio del curso desde Firestore
   try {
-    const cursoRef = db.collection('cursos_privados').doc(cursoId);  // Suponiendo que los cursos privados están en esta colección
+    const cursoRef = db.doc(`cursos_privados/${cursoId}`);  
     const cursoDoc = await cursoRef.get();
 
     if (!cursoDoc.exists) {
