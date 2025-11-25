@@ -1,11 +1,11 @@
-// backend/routes/paymentRoutes.js
-
-const admin = require('firebase-admin');  // Agregamos Firebase Admin
 const express = require('express');
 const router = express.Router();
-const { crearPreferenciaPago } = require('../services/mercadoPagoService.js');  // Mantén tu lógica de MercadoPago
-const db = admin.firestore();  // Accedemos a Firestore
+const admin = require('firebase-admin'); // Esto usa la inicialización hecha en firebaseAdmin.js
+const { crearPreferenciaPago } = require('../services/mercadoPagoService.js');
+const db = admin.firestore();  // Accedemos a Firestore, ya debería estar inicializado correctamente
 
+
+console.log('FIREBASE_SERVICE_ACCOUNT 1:', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 // Ruta para crear la preferencia de pago
 router.post('/create_preference', async (req, res) => {
   console.log("📥 Llamada recibida en /create_preference"); // 👈
@@ -45,5 +45,3 @@ router.post('/create_preference', async (req, res) => {
 });
 
 module.exports = router;
-
-
