@@ -2,8 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const admin = require('firebase-admin'); // Esto usa la inicialización hecha en firebaseAdmin.js
-const { crearPreferenciaPago } = require('../services/mercadoPagoService.js');
 console.log('FIREBASE_SERVICE_ACCOUNT 1 y 1/2:', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
+const { crearPreferenciaPago } = require('../services/mercadoPagoService.js');
 const db = admin.firestore();  // Accedemos a Firestore, ya debería estar inicializado correctamente
 
 
