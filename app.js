@@ -1,4 +1,5 @@
 // backend/app.js
+require('./firebaseAdmin');  // Inicializa Firebase antes de cualquier otra cosa
 const express = require('express');
 const app = express();
 const cors = require('cors');
