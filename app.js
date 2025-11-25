@@ -1,6 +1,6 @@
 // backend/app.js
-console.log('FIREBASE_SERVICE_ACCOUNT:', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 const express = require('express');
+console.log('FIREBASE_SERVICE_ACCOUNT:', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 const app = express();
 const cors = require('cors');
 const paymentRoutes = require('./routes/paymentRoutes.js');
