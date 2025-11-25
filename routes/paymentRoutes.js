@@ -2,7 +2,6 @@
 const express = require('express');
 const router = express.Router();
 const admin = require('firebase-admin'); // Esto usa la inicialización hecha en firebaseAdmin.js
-console.log('FIREBASE_SERVICE_ACCOUNT 1 y 1/2:', process.env.FIREBASE_SERVICE_ACCOUNT); // Verifica si está definida
 const { crearPreferenciaPago } = require('../services/mercadoPagoService.js');
 const db = admin.firestore();  // Accedemos a Firestore, ya debería estar inicializado correctamente
 
@@ -18,6 +17,7 @@ router.post('/create_preference', async (req, res) => {
     // 1. Obtener el precio del curso desde Firestore
     const cursoRef = db.collection('cursos_privados').doc(cursoId);  // Suponiendo que los cursos privados están en esta colección
     const cursoDoc = await cursoRef.get();
+    console.log("🔍 Curso obtenido de Firestore:", cursoDoc.exists); // 👈
 
     if (!cursoDoc.exists) {
       return res.status(404).json({ error: 'Curso no encontrado' });
