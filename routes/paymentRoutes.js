@@ -15,7 +15,7 @@ router.post('/create_preference', async (req, res) => {
     type: 'preference_created',
     cursoNombre:"",
     cursoId:"",
-    init_point: null,
+    //init_point: null,
     createdAt: new Date().toISOString()
   };
   req.io.emit('notify', JSON.stringify(payload));
