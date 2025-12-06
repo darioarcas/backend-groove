@@ -1,70 +1,60 @@
 // backend/routes/paymentRoutes.js
 const express = require('express');
 const router = express.Router();
-const admin = require('firebase-admin'); // Esto usa la inicialización hecha en firebaseAdmin.js
+const admin = require('firebase-admin');
 const { crearPreferenciaPago } = require('../services/mercadoPagoService.js');
-const db = admin.firestore();  // Accedemos a Firestore, ya debería estar inicializado correctamente
-
+const db = admin.firestore();
 
 // Ruta para crear la preferencia de pago
 router.post('/create_preference', async (req, res) => {
-  console.log("📥 Llamada recibida en /create_preference"); // 👈
+  console.log("📥 Llamada recibida en /create_preference");
   
   try {
-    // Obtenemos la información de la solicitud
     const { cursoNombre, cursoId, uid, base_url } = req.body;
 
     // 1. Obtener el precio del curso desde Firestore
-    const cursoRef = db.collection('cursos_privados').doc(cursoId);  // Suponiendo que los cursos privados están en esta colección
+    const cursoRef = db.collection('cursos_privados').doc(cursoId);
     const cursoDoc = await cursoRef.get();
-    console.log("🔍 Curso obtenido de Firestore:", cursoDoc); // 👈
+    console.log("🔍 Curso obtenido de Firestore:", cursoDoc);
 
     if (!cursoDoc.exists) {
       return res.status(404).json({ error: 'Curso no encontrado' });
     }
 
     const cursoData = cursoDoc.data();
-    const precio = cursoData.precio;  // Suponiendo que el campo "precio" está en el curso
+    const precio = cursoData.precio;
 
-    // 2. Crear la preferencia de pago con MercadoPago, usando el precio obtenido de Firestore
+    // 2. Crear la preferencia de pago con MercadoPago
     const init_point = await crearPreferenciaPago({ 
       cursoNombre, 
       cursoId, 
       uid, 
-      precio,  // Le pasamos el precio obtenido de Firestore
+      precio,
       base_url 
     });
 
+    console.log("🔁 init_point generado:", init_point);
 
-
-
-
-    // Emitir a todos los clientes conectados (ajusta el payload según quieras)
+    // 3. Emitir notificación a todos los clientes conectados
     if (req.io) {
       const payload = {
         type: 'preference_created',
-        preferenceId: pref.id || pref.preference_id || null,
-        init_point: pref.init_point || pref.sandbox_init_point || null,
-        items: pref.items || null,
+        cursoNombre,
+        cursoId,
+        init_point,
         createdAt: new Date().toISOString()
       };
       req.io.emit('notify', JSON.stringify(payload));
-      console.log('[notify] preference_created emitted', payload);
+      console.log('[notify] preference_created emitted:', payload);
     } else {
       console.warn('[notify] req.io not available — no emit on preference creation');
     }
 
-    
-    console.log("🔁 init_point generado:", init_point); // 👈
-    
-    // 3. Respondemos con la URL para redirigir al usuario a MercadoPago
-    res.json({ init_point });
-
-    // 4. Alternativamente, podríamos responder con el nombre del curso comprado
-    return res.status(201).json(cursoNombre);
+    // 4. Responder al cliente (una sola vez)
+    return res.status(201).json({ init_point, cursoNombre });
   } catch (error) {
-    console.error("❌ Error en /create_preference:", error); // 👈
-    res.status(500).json({ error: 'Error creando preferencia' });
+    console.error("❌ Error en /create_preference:", error);
+    return res.status(500).json({ error: 'Error creando preferencia' });
   }
 });
 
