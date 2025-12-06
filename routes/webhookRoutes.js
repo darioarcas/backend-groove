@@ -1,5 +1,4 @@
 // routes/webhookRoutes.js
-
 const { admin, db } = require("../firebaseAdmin.js");
 const express = require("express");
 const router = express.Router();
@@ -66,11 +65,8 @@ router.post("/mercadopago", async (req, res) => {
           compradores: admin.firestore.FieldValue.arrayUnion(uid),
         });
 
-
-
-
         // ⭐ Emitir notificación via socket.io a TODOS los clientes
-        if (io) {
+        if (req.io) {  // Asegurarse de que io está disponible
           const notifyMessage = {
             message: `✅ ¡Pago aprobado! Acceso al curso activado.`,
             type: "payment_approved",
@@ -78,9 +74,9 @@ router.post("/mercadopago", async (req, res) => {
             userId: uid,
             timestamp: new Date().toISOString(),
           };
-          
+
           console.log(`📢 Broadcasting notify evento:`, notifyMessage);
-          io.emit('notify', notifyMessage);
+          req.io.emit('notify', notifyMessage);  // Usamos req.io aquí
         }
 
         console.log(`✅ Usuario ${uid} habilitado para el curso ${cursoId}`);
