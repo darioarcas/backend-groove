@@ -25,18 +25,22 @@ app.use('/api', paymentRoutes);
 
 // Configuramos WebSocket para escuchar conexiones
 io.on('connection', (socket) => {
-  console.log('Nuevo cliente conectado');
+  console.log('Nuevo cliente conectado:', socket.id);
 
-  // Escuchar evento de "ping" y enviar una notificación
   socket.on('ping', () => {
-    console.log('Petición "ping" recibida');
-    socket.emit('notify', '¡Tienes nueva notificación!');  // Enviamos una notificación al cliente
+    console.log('Petición "ping" recibida desde:', socket.id);
+    io.emit('notify', { message: '¡Tienes nueva notificación!', timestamp: new Date().toISOString() });
   });
 
-  // Cuando el cliente se desconecta
   socket.on('disconnect', () => {
-    console.log('Cliente desconectado');
+    console.log('Cliente desconectado:', socket.id);
   });
+});
+
+app.post('/ping', (req, res) => {
+  console.log('Ping recibido, manteniendo servidor activo');
+  io.emit('notify', { message: '¡Notificación desde HTTP ping!', timestamp: new Date().toISOString() });
+  res.sendStatus(200);
 });
 
 // Ruta POST para mantener el servidor despierto
