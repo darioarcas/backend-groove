@@ -13,9 +13,9 @@ router.post('/create_preference', async (req, res) => {
  ///////////////////// BORRAR //////////////////////
   const payload = {
     type: 'preference_created',
-    cursoNombre,
-    cursoId,
-    init_point,
+    cursoNombre:"",
+    cursoId:"",
+    init_point: null,
     createdAt: new Date().toISOString()
   };
   req.io.emit('notify', JSON.stringify(payload));
