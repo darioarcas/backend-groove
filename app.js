@@ -1,5 +1,4 @@
 // backend/app.js
-
 require('./firebaseAdmin');  // Inicializa Firebase antes de cualquier otra cosa
 const express = require('express');
 const app = express();
@@ -9,8 +8,6 @@ const webhookRoutes = require('./routes/webhookRoutes.js');
 const http = require('http'); // Importamos http
 const socketIo = require('socket.io'); // Importamos socket.io
 
-// require('dotenv').config(); // Solo en local, no en producción
-
 // Creamos un servidor HTTP para WebSocket
 const server = http.createServer(app);
 const io = socketIo(server);  // Inicializamos socket.io con el servidor HTTP
@@ -19,12 +16,14 @@ const io = socketIo(server);  // Inicializamos socket.io con el servidor HTTP
 app.use(cors());
 app.use(express.json());
 
-
-// ⭐ Pasar io al middleware de webhook
-app.use('/api/webhook', (req, res, next) => {
-  req.io = io;  // Inyectamos io en el request
+// Inyectar io globalmente en todas las rutas
+app.use((req, res, next) => {
+  req.io = io;  // Inyectamos io en el request globalmente
   next();
-}, webhookRoutes);
+});
+
+// Pasar io al middleware de webhook
+app.use('/api/webhook', webhookRoutes);
 
 // Ruta base
 app.use('/api', paymentRoutes);
@@ -43,17 +42,12 @@ io.on('connection', (socket) => {
   });
 });
 
+// Ruta POST para mantener el servidor activo y emitir notificaciones
 app.post('/ping', (req, res) => {
   console.log('Ping recibido, manteniendo servidor activo');
   io.emit('notify', { message: '¡Notificación desde HTTP ping!', timestamp: new Date().toISOString() });
   res.sendStatus(200);
 });
-
-// Ruta POST para mantener el servidor despierto
-// app.post('/ping', (req, res) => {
-//   console.log('Ping recibido, manteniendo servidor activo');
-//   res.sendStatus(200);  // Respondemos con OK (200)
-// });
 
 // Iniciamos el servidor HTTP en el puerto configurado
 const PORT = process.env.PORT || 5000;
