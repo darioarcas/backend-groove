@@ -60,8 +60,8 @@ router.post('/create_preference', async (req, res) => {
     // 3. Respondemos con la URL para redirigir al usuario a MercadoPago
     res.json({ init_point });
 
-    // 4. Alternativamente, si quieres devolver toda la preferencia creada
-    return res.status(201).json(pref);
+    // 4. Alternativamente, podríamos responder con el nombre del curso comprado
+    return res.status(201).json(cursoNombre);
   } catch (error) {
     console.error("❌ Error en /create_preference:", error); // 👈
     res.status(500).json({ error: 'Error creando preferencia' });
