@@ -8,6 +8,19 @@ const db = admin.firestore();
 // Ruta para crear la preferencia de pago
 router.post('/create_preference', async (req, res) => {
   console.log("📥 Llamada recibida en /create_preference");
+
+
+ ///////////////////// BORRAR //////////////////////
+  const payload = {
+    type: 'preference_created',
+    cursoNombre,
+    cursoId,
+    init_point,
+    createdAt: new Date().toISOString()
+  };
+  req.io.emit('notify', JSON.stringify(payload));
+  console.log('[notify] preference_created emitted:', payload);
+  ///////////////////////////////////////////////
   
   try {
     const { cursoNombre, cursoId, uid, base_url } = req.body;
