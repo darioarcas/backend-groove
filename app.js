@@ -50,10 +50,10 @@ app.post('/ping', (req, res) => {
 });
 
 // Ruta POST para mantener el servidor despierto
-app.post('/ping', (req, res) => {
-  console.log('Ping recibido, manteniendo servidor activo');
-  res.sendStatus(200);  // Respondemos con OK (200)
-});
+// app.post('/ping', (req, res) => {
+//   console.log('Ping recibido, manteniendo servidor activo');
+//   res.sendStatus(200);  // Respondemos con OK (200)
+// });
 
 // Iniciamos el servidor HTTP en el puerto configurado
 const PORT = process.env.PORT || 5000;
