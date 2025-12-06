@@ -66,6 +66,23 @@ router.post("/mercadopago", async (req, res) => {
           compradores: admin.firestore.FieldValue.arrayUnion(uid),
         });
 
+
+
+
+        // ⭐ Emitir notificación via socket.io a TODOS los clientes
+        if (io) {
+          const notifyMessage = {
+            message: `✅ ¡Pago aprobado! Acceso al curso activado.`,
+            type: "payment_approved",
+            courseId: cursoId,
+            userId: uid,
+            timestamp: new Date().toISOString(),
+          };
+          
+          console.log(`📢 Broadcasting notify evento:`, notifyMessage);
+          io.emit('notify', notifyMessage);
+        }
+
         console.log(`✅ Usuario ${uid} habilitado para el curso ${cursoId}`);
       }
     }

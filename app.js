@@ -18,7 +18,13 @@ const io = socketIo(server);  // Inicializamos socket.io con el servidor HTTP
 // Middleware para habilitar CORS y analizar JSON
 app.use(cors());
 app.use(express.json());
-app.use('/api/webhook', webhookRoutes);
+
+
+// ⭐ Pasar io al middleware de webhook
+app.use('/api/webhook', (req, res, next) => {
+  req.io = io;  // Inyectamos io en el request
+  next();
+}, webhookRoutes);
 
 // Ruta base
 app.use('/api', paymentRoutes);
