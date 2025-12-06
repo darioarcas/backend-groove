@@ -35,10 +35,33 @@ router.post('/create_preference', async (req, res) => {
       base_url 
     });
 
-    console.log("🔁 init_point generado:", init_point); // 👈
 
+
+
+
+    // Emitir a todos los clientes conectados (ajusta el payload según quieras)
+    if (req.io) {
+      const payload = {
+        type: 'preference_created',
+        preferenceId: pref.id || pref.preference_id || null,
+        init_point: pref.init_point || pref.sandbox_init_point || null,
+        items: pref.items || null,
+        createdAt: new Date().toISOString()
+      };
+      req.io.emit('notify', JSON.stringify(payload));
+      console.log('[notify] preference_created emitted', payload);
+    } else {
+      console.warn('[notify] req.io not available — no emit on preference creation');
+    }
+
+    
+    console.log("🔁 init_point generado:", init_point); // 👈
+    
     // 3. Respondemos con la URL para redirigir al usuario a MercadoPago
     res.json({ init_point });
+
+    // 4. Alternativamente, si quieres devolver toda la preferencia creada
+    return res.status(201).json(pref);
   } catch (error) {
     console.error("❌ Error en /create_preference:", error); // 👈
     res.status(500).json({ error: 'Error creando preferencia' });
