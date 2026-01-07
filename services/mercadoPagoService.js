@@ -13,6 +13,8 @@ if (admin.apps.length === 0) {
 const db = admin.firestore();  // Acceso a Firestore
 
 
+
+// Crear una preferencia de pago para un curso específico
 const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => {
   // Validar que base_url sea una URL permitida
   const allowedOrigins = ['https://academiagroove.com', 'https://darioarcas.github.io', 'http://localhost:3000'];
@@ -82,37 +84,41 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => 
 
 
 
-const crearSuscripcion = async ({ cursoNombre, cursoId, uid, base_url }) => {
+
+// Crear una suscripción
+const crearSuscripcion = async ({ uid, base_url }) => {
   const allowedOrigins = ['https://academiagroove.com', 'https://darioarcas.github.io', 'http://localhost:3000'];
   if (!allowedOrigins.includes(base_url)) {
     throw new Error('Origen no permitido');
   }
 
   if (base_url === 'https://darioarcas.github.io' || base_url === 'http://localhost:3000') {
-    base_url += '/pagina-groove-inicio-de-sesion/#';
+    base_url += '/dissidents-web/#';
   }
 
   try {
-    const cursoRef = db.doc(`cursos_privados/${cursoId}`);
+    // Obtener el precio de la suscripción desde Firestore
+    const cursoRef = db.doc(`cursos_privados/suscription`);  
     const cursoDoc = await cursoRef.get();
 
     if (!cursoDoc.exists) {
-      throw new Error('Curso no encontrado');
+      throw new Error('Suscripción no encontrada');
     }
 
     const cursoData = cursoDoc.data();
-    const precio = cursoData.precio;
+    const precio = cursoData.precio;  // Suponiendo que el campo "precio" está en el curso
 
+    // Crear la preferencia de suscripción
     const successUrl = `${base_url}/perfil`;
     const failureUrl = `${base_url}/error-pago`;
 
-    // Creamos la preferencia de suscripción
-    const preference = {
+    // Configuración de la suscripción recurrente
+    const subscription = {
       items: [
         {
-          title: cursoNombre || 'Curso',
+          title: 'Suscripción mensual a los servicios de Dissidents School',  // Título genérico para la suscripción
           quantity: 1,
-          unit_price: precio,
+          unit_price: precio,  // Precio dinámico
           currency_id: 'ARS',
         },
       ],
@@ -120,38 +126,41 @@ const crearSuscripcion = async ({ cursoNombre, cursoId, uid, base_url }) => {
         success: successUrl,
         failure: failureUrl,
       },
-      notification_url: `https://backend-groove-pi69.onrender.com/api/webhook/mercadopago`,
-      external_reference: `${cursoId}_${uid}`,
+      notification_url: `https://backend-groove-pi69.onrender.com/api/webhook/mercadopago`,  // URL del webhook
+      external_reference: uid,  // Aquí usamos el UID del usuario como referencia externa
       auto_return: 'approved',
+      // Aquí se crea el plan recurrente con las configuraciones correctas
       subscription: {
-        frequency: 1, // Frecuencia del pago (1 para mensual)
-        frequency_type: 'months', // Tipo de frecuencia (meses)
-        transaction_amount: precio,
+        frequency: 1,  // Frecuencia mensual
+        frequency_type: 'months',
+        transaction_amount: precio,  // Valor mensual de la suscripción
         currency_id: 'ARS',
         back_urls: {
           success: successUrl,
           failure: failureUrl,
         },
-      }
+      },
     };
 
     const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN_SUSCRIPCION}`,  // Token de MercadoPago
       },
-      body: JSON.stringify(preference),
+      body: JSON.stringify(subscription),
     });
 
     const data = await response.json();
     console.log("✅ Preferencia de suscripción creada:", data);
-    return data.init_point;
+    return data.init_point;  // Retorna el punto de inicio para redirigir al usuario
   } catch (error) {
     console.error('❌ Error creando preferencia de suscripción:', error);
     throw error;
   }
 };
+
+
 
 
 module.exports = { crearPreferenciaPago, crearSuscripcion };

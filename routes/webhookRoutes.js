@@ -83,11 +83,73 @@ router.post("/mercadopago", async (req, res) => {
       }
     }
 
+
+
+
+    // Manejar eventos de suscripción
+
+    else if (type === "subscription") {
+      const subscriptionStatus = data.status;  // El estado de la suscripción
+
+      const { id, external_reference } = data;
+      const uid = external_reference;  // Ahora usamos el UID como referencia externa
+
+      // Obtener la información del usuario
+      const userRef = db.collection("users").doc(uid);
+      const userSnap = await userRef.get();
+
+      if (!userSnap.exists) {
+        console.warn("⚠️ Usuario no encontrado:", uid);
+        return res.sendStatus(404);
+      }
+
+      const userData = userSnap.data();
+
+      if (subscriptionStatus === "cancelled") {
+        // Si la suscripción fue cancelada
+        console.log(`⚠️ Suscripción cancelada para el usuario ${uid}`);
+        await userRef.update({
+          suscripcionActiva: false,
+          suscripcionFechaVencimiento: admin.firestore.FieldValue.serverTimestamp(), // Actualizamos la fecha de vencimiento
+        });
+      }
+
+      if (subscriptionStatus === "rejected") {
+        // Si el pago fue rechazado
+        console.log(`⚠️ El pago fue rechazado para el usuario ${uid}`);
+      }
+
+      if (subscriptionStatus === "active") {
+        // Si la suscripción se activa
+        console.log(`✅ Suscripción activada para el usuario ${uid}`);
+        await userRef.update({
+          suscripcionActiva: true,
+          suscripcionFechaVencimiento: admin.firestore.FieldValue.serverTimestamp(), // Actualizamos la fecha de vencimiento
+        });
+      }
+
+      // Emitir notificación sobre el estado de la suscripción
+      if (req.io) {
+        const notifyMessage = {
+          message: `🔔 Estado de suscripción cambiado: ${subscriptionStatus}`,
+          type: "subscription_status_changed",
+          userId: uid,
+          timestamp: new Date().toISOString(),
+        };
+
+        console.log(`📢 Broadcasting notify evento:`, notifyMessage);
+        req.io.emit('notify', notifyMessage);  // Notificar a todos los clientes
+      }
+    }
+
     res.sendStatus(200);
   } catch (error) {
     console.error("❌ Error en webhook de Mercado Pago:", error);
     res.sendStatus(500);
   }
 });
+
+
+
 
 module.exports = router;
