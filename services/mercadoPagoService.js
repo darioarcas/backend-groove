@@ -10,19 +10,18 @@ if (admin.apps.length === 0) {
 }
 
 
-const db = admin.firestore();  // Acceso a Firestore
+const db = admin.firestore();  // Acceso a Firestore 
 
 
-
-// Crear una preferencia de pago para un curso específico
 const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => {
   // Validar que base_url sea una URL permitida
   const allowedOrigins = ['https://academiagroove.com', 'https://darioarcas.github.io', 'http://localhost:3000'];
   if (!allowedOrigins.includes(base_url)) {
     throw new Error('Origen no permitido');
   }
+  // Ajustar base_url para GitHub Pages o localhost
   if (base_url === 'https://darioarcas.github.io' || base_url === 'http://localhost:3000') {
-    base_url += '/pagina-groove-inicio-de-sesion/#';
+    base_url += '/dissidents-web/#';
   }
 
   // Obtener el precio del curso desde Firestore
@@ -35,7 +34,7 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => 
     }
 
     const cursoData = cursoDoc.data();
-    const precio = cursoData.precio;  // Suponiendo que el campo "precio" está en el curso
+    const precio = cursoData.precio;
 
     const successUrl = `${base_url}/perfil`;
     const failureUrl = `${base_url}/error-pago`;
@@ -50,6 +49,11 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => 
           currency_id: 'ARS',
         },
       ],
+      metadata: {
+        uid,
+        cursoId,
+        tipo: "pago_unico"
+      },
       back_urls: {
         success: successUrl,
         failure: failureUrl,
@@ -85,13 +89,92 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => 
 
 
 
+
+
+
+// Crear un plan de suscripción
+const crearPlanSuscripcion = async (precio, base_url) => {
+  const planData = {
+    description: 'Suscripción mensual a Dissidents School',
+    frequency: 1,  // Frecuencia mensual
+    frequency_type: 'months',
+    transaction_amount: precio,  // Precio mensual
+    currency_id: 'ARS',
+    back_urls: {
+      success: `${base_url}/#/perfil`,
+      failure: `${base_url}/#/error-pago`,
+    },
+    notification_url: 'https://backend-groove-pi69.onrender.com/api/webhook/mercadopago',
+  };
+
+  const response = await fetch('https://api.mercadopago.com/v1/subscriptions/plans', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN_SUSCRIPCION}`,
+    },
+    body: JSON.stringify(planData),
+  });
+
+  const data = await response.json();
+  console.log('Plan de suscripción creado:', data);
+  return data.id;  // ID del plan de suscripción
+};
+
+
+
+
+
+// Crear preferencia de suscripción
+const crearPreferenciaSuscripcion = async ({ uid, precio, planId, base_url }) => {
+  const preferenceData = {
+    items: [
+      {
+        title: 'Suscripción mensual a Dissidents School',
+        quantity: 1,
+        unit_price: precio,
+        currency_id: 'ARS',
+      },
+    ],
+    back_urls: {
+      success: `${base_url}/#/perfil`,
+      failure: `${base_url}/#/error-pago`,
+    },
+    notification_url: 'https://backend-groove-pi69.onrender.com/api/webhook/mercadopago',
+    external_reference: uid,
+    auto_return: 'approved',
+    operation_type: 'subscription',
+    plan_id: planId,  // Asociamos la preferencia con el plan de suscripción
+  };
+
+  const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN_SUSCRIPCION}`,
+    },
+    body: JSON.stringify(preferenceData),
+  });
+
+  const data = await response.json();
+  console.log('Preferencia de suscripción creada:', data);
+  return data.init_point;  // Este es el URL donde el usuario será redirigido para completar el pago
+};
+
+
+
+
+
+
+
 // Crear una suscripción
 const crearSuscripcion = async ({ uid, base_url }) => {
+  // Validar que base_url sea una URL permitida
   const allowedOrigins = ['https://academiagroove.com', 'https://darioarcas.github.io', 'http://localhost:3000'];
   if (!allowedOrigins.includes(base_url)) {
     throw new Error('Origen no permitido');
   }
-
+  // Ajustar base_url para GitHub Pages o localhost
   if (base_url === 'https://darioarcas.github.io' || base_url === 'http://localhost:3000') {
     base_url += '/dissidents-web/#';
   }
@@ -106,7 +189,7 @@ const crearSuscripcion = async ({ uid, base_url }) => {
     }
 
     const cursoData = cursoDoc.data();
-    const precio = cursoData.precio;  // Suponiendo que el campo "precio" está en el curso
+    const precio = cursoData.precio;  // Precio de la suscripción
 
     // Crear la preferencia de suscripción
     const successUrl = `${base_url}/perfil`;
@@ -163,4 +246,4 @@ const crearSuscripcion = async ({ uid, base_url }) => {
 
 
 
-module.exports = { crearPreferenciaPago, crearSuscripcion };
+module.exports = { crearPreferenciaPago, crearPlanSuscripcion, crearPreferenciaSuscripcion, crearSuscripcion };

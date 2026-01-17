@@ -4,7 +4,10 @@ const express = require("express");
 const router = express.Router();
 const fetch = require("node-fetch");
 
-router.post("/mercadopago", async (req, res) => {
+
+
+router.post("/", async (req, res) => {
+  console.log("🌐 WEBHOOK RECIBIDO:", JSON.stringify(req.body, null, 2));
   try {
     const { type, data } = req.body;
 
@@ -52,6 +55,7 @@ router.post("/mercadopago", async (req, res) => {
           return res.sendStatus(404);
         }
 
+        // ⬇⬇⬇⬇ Agregar curso a la lista de cursos del usuario
         const userData = userSnap.data();
         const cursosComprados = new Set(userData.cursosComprados || []);
         cursosComprados.add(cursoId);
@@ -86,8 +90,8 @@ router.post("/mercadopago", async (req, res) => {
 
 
 
-    // Manejar eventos de suscripción
 
+    // Manejo de suscripciones
     else if (type === "subscription") {
       const subscriptionStatus = data.status;  // El estado de la suscripción
 
@@ -142,12 +146,58 @@ router.post("/mercadopago", async (req, res) => {
       }
     }
 
+
+
+
+
+
+
+    // MercadoPago ENVÍA "preapproval" para suscripciones
+    if (type === "preapproval") {
+      const preapprovalId = data.id;
+
+      const resp = await fetch(
+        `https://api.mercadopago.com/preapproval/${preapprovalId}`,
+        { headers: { Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN_SUSCRIPCION}` } }
+      );
+
+      const sub = await resp.json();
+      const subSnap = await db.collection("suscripciones").doc(preapprovalId).get();
+
+      if (!subSnap.exists) return res.sendStatus(200);
+
+      const { uid } = subSnap.data();
+      const estado = sub.status;
+
+      console.log("📡 EVENTO DE SUSCRIPCIÓN:", preapprovalId, estado);
+
+      // 🔻 Cancelaciones y pausas
+      if (estado === "cancelled" || estado === "paused") {
+        await db.collection("users").doc(uid).update({
+          suscripcionActiva: false
+        });
+      }
+
+      // 🔼 Renovaciones (ciclo)
+      if (estado === "active") {
+        await db.collection("users").doc(uid).update({
+          suscripcionActiva: true,
+          suscripcionVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 1))
+        });
+      }
+
+      return res.sendStatus(200);
+    }
+
     res.sendStatus(200);
   } catch (error) {
     console.error("❌ Error en webhook de Mercado Pago:", error);
     res.sendStatus(500);
   }
 });
+
+
+
 
 
 
