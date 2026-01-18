@@ -188,7 +188,7 @@ router.post("/create_subscription", async (req, res) => {
 
     // Ajustar base_url para GitHub Pages o localhost
     if (base_url === 'https://darioarcas.github.io' || base_url === 'http://localhost:3000') {
-      base_url = `${base_url}/backend-groove/#`;
+      base_url = `${base_url}/pagina-groove-inicio-de-sesion/#`;
     }
 
 
@@ -216,6 +216,9 @@ router.post("/create_subscription", async (req, res) => {
 
     const cursoData = cursoDoc.data();
     const precio = cursoData.precio;  // Precio de la suscripción
+
+
+    console.log("BACK URL DE LA SUSCRIPCION: ", `${base_url}/suscripcion-estado`);
 
     const response = await fetch(
       "https://api.mercadopago.com/preapproval",
