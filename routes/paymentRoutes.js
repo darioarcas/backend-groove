@@ -127,10 +127,11 @@ router.get("/subscription/:preapprovalId/verify", async (req, res) => {
 
       // Activar SUSCRIPCIÓN en usuario
       await db.collection("users").doc(uid).update({
+        status: sub.status,
         suscripcionActiva: true,
         suscripcionId: preapprovalId,
         suscripcionFechaInicio: new Date(),
-        suscripcionVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 1))
+        suscripcionFechaVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 1))
       });
 
 
@@ -258,10 +259,19 @@ router.post("/create_subscription", async (req, res) => {
     }
 
 
+    // Marcar en el usuario status pendiente
+    await db.collection("users").doc(uid).update({
+      status: data.status,
+    });
+
+    console.log("ESTADO DE SUSCRIPCION: ", data.status);
+
+
 
     // 🔥 ACTIVACIÓN INMEDIATA 
     if (data.status === "authorized") {
       await db.collection("users").doc(uid).update({
+        status: data.status,
         suscripcionActiva: true,
         suscripcionFechaInicio: new Date(),
         suscripcionVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 1)),
