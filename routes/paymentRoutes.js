@@ -188,7 +188,7 @@ router.post("/create_subscription", async (req, res) => {
 
     // Ajustar base_url para GitHub Pages o localhost
     if (base_url === 'https://darioarcas.github.io' || base_url === 'http://localhost:3000') {
-      base_url = `${base_url}/dissidents-web/#`;
+      base_url = `${base_url}/backend-groove/#`;
     }
 
 
