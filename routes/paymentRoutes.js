@@ -51,7 +51,7 @@ router.post('/create_preference', async (req, res) => {
         createdAt: new Date().toISOString()
       };
       req.io.emit('notify', JSON.stringify(payload));
-      console.log('[notify] preference_created emitted:', payload);
+      console.log('[notify] preference_created [CREATE PREFERENCE] emitted:', payload);
     } else {
       console.warn('[notify] req.io not available — no emit on preference creation');
     }
@@ -209,7 +209,7 @@ router.post("/create_subscription", async (req, res) => {
         createdAt: new Date().toISOString()
       };
       req.io.emit('notify', JSON.stringify(payload));
-      console.log('[notify] subscription_created emitted:', payload);
+      console.log('[notify] subscription_created [CREATE SUSCRIPTION] emitted:', payload);
     } else {
       console.warn('[notify] req.io not available — no emit on subscription creation');
     }
