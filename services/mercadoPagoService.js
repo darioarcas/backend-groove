@@ -21,7 +21,7 @@ const crearPreferenciaPago = async ({ cursoNombre, cursoId, uid, base_url }) => 
   }
   // Ajustar base_url para GitHub Pages o localhost
   if (base_url === 'https://darioarcas.github.io' || base_url === 'http://localhost:3000') {
-    base_url += '/dissidents-web/#';
+    base_url += '/pagina-groove-inicio-de-sesion/#';
   }
 
   // Obtener el precio del curso desde Firestore
@@ -176,7 +176,7 @@ const crearSuscripcion = async ({ uid, base_url }) => {
   }
   // Ajustar base_url para GitHub Pages o localhost
   if (base_url === 'https://darioarcas.github.io' || base_url === 'http://localhost:3000') {
-    base_url += '/dissidents-web/#';
+    base_url += '/pagina-groove-inicio-de-sesion/#';
   }
 
   try {
